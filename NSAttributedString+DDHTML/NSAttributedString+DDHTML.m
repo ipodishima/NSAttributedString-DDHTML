@@ -128,7 +128,15 @@
         if (strncmp("b", (const char *)xmlNode->name, strlen((const char *)xmlNode->name)) == 0 ||
             strncmp("strong", (const char *)xmlNode->name, strlen((const char *)xmlNode->name)) == 0) {
             if (boldFont) {
-                [nodeAttributedString addAttribute:NSFontAttributeName value:boldFont range:nodeAttributedStringRange];
+                UIFont *existingFont = [nodeAttributedString attribute:NSFontAttributeName atIndex:nodeAttributedStringRange.location effectiveRange:nil];
+                
+                if (existingFont && existingFont.fontDescriptor.symbolicTraits == UIFontDescriptorTraitItalic) {
+                    UIFontDescriptor *boldItalicDescriptor = [existingFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold | UIFontDescriptorTraitItalic];
+                    UIFont *boldItalic = [UIFont fontWithDescriptor:boldItalicDescriptor size:boldFont.pointSize];
+                    [nodeAttributedString addAttribute:NSFontAttributeName value:boldItalic range:nodeAttributedStringRange];
+                } else {
+                    [nodeAttributedString addAttribute:NSFontAttributeName value:boldFont range:nodeAttributedStringRange];
+                }
             }
         }
         
@@ -136,7 +144,15 @@
         else if (strncmp("i", (const char *)xmlNode->name, strlen((const char *)xmlNode->name)) == 0 ||
                  strncmp("em", (const char *)xmlNode->name, strlen((const char *)xmlNode->name)) == 0) {
             if (italicFont) {
-                [nodeAttributedString addAttribute:NSFontAttributeName value:italicFont range:nodeAttributedStringRange];
+                UIFont *existingFont = [nodeAttributedString attribute:NSFontAttributeName atIndex:nodeAttributedStringRange.location effectiveRange:nil];
+                
+                if (existingFont && existingFont.fontDescriptor.symbolicTraits == UIFontDescriptorTraitBold) {
+                    UIFontDescriptor *boldItalicDescriptor = [existingFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold | UIFontDescriptorTraitItalic];
+                    UIFont *boldItalic = [UIFont fontWithDescriptor:boldItalicDescriptor size:boldFont.pointSize];
+                    [nodeAttributedString addAttribute:NSFontAttributeName value:boldItalic range:nodeAttributedStringRange];
+                } else {
+                    [nodeAttributedString addAttribute:NSFontAttributeName value:italicFont range:nodeAttributedStringRange];
+                }
             }
         }
         
